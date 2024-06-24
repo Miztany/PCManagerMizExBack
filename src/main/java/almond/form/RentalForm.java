@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 public class RentalForm {
-	@NotEmpty
+	@NotNull
 	private Integer rentalId;
 	@NotEmpty
 	private String employeeNum;

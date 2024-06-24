@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 public class ReturnForm {
-	@NotEmpty
+	@NotNull
 	private Integer rentalId;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@NotNull

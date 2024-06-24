@@ -55,7 +55,7 @@ public class RentalService {
 
 	public MessageResponse back(ReturnForm rf) {
 		Rental r = rentalRepository.findByRentalId(rf.getRentalId()).get(0);
-		r.setFree(false);
+		r.setFree(true);
 		r.setUser(null);
 		r.setLoanDate(null);
 		r.setRemarks(null);
