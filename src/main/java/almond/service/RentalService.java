@@ -1,12 +1,19 @@
 package almond.service;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import almond.entity.Rental;
+import almond.entity.User;
+import almond.form.InventoryForm;
+import almond.form.RentalForm;
+import almond.form.ReturnForm;
 import almond.repository.RentalRepository;
+import almond.repository.UserRepository;
+import almond.response.MessageResponse;
 
 @Service
 public class RentalService {
@@ -17,9 +24,9 @@ public class RentalService {
 //	@Autowired
 //	DeviceRepository deviceRepository;
 //
-//	@Autowired
-//	UserRepository userRepository;
-//
+	@Autowired
+	UserRepository userRepository;
+
 //	@Autowired
 //	HistoryRepository historyRepository;
 
@@ -31,143 +38,38 @@ public class RentalService {
 		return rentalRepository.findByRentalId(rentalId);
 	}
 
-////	一覧取得
-//	public List<RentalBack> findByFailureFlase() {
-//		List<RentalBack> listRentalBack = new ArrayList<RentalBack>();
-//		List<Rental> listRental = rentalRepository.findByFailureFalse();
-//
-//		for (Rental r : listRental) {
-//			listRentalBack.add(ConvRentalToRentalBack(r));
-//		}
-//
-//		return listRentalBack;
-//	}
-//
-////	サマリの取得
-//	public List<Integer> getSummary() {
-//		List<Rental> listRental = rentalRepository.findByFailureFalse();
-//		List<Integer> EmptyNotEmpty = new ArrayList<Integer>();
-//		EmptyNotEmpty.add(0);
-//		EmptyNotEmpty.add(0);
-//
-//		for (Rental r : listRental) {
-//			if (r.getEmpty()) {
-//				EmptyNotEmpty.set(0, EmptyNotEmpty.get(0) + 1);
-//			} else {
-//				EmptyNotEmpty.set(1, EmptyNotEmpty.get(1) + 1);
-//			}
-//		}
-//
-//		return EmptyNotEmpty;
-//	}
-//
-////	詳細の取得
-//	public List<RentalBack> findByAssetNum(String assetNum) {
-//		List<Rental> listRental = rentalRepository.findByAssetNum(assetNum);
-//		List<RentalBack> listRentalBack = new ArrayList<RentalBack>();
-//
-//		for (Rental r : listRental) {
-//			listRentalBack.add(ConvRentalToRentalBack(r));
-//		}
-//
-//		return listRentalBack;
-//	}
-//
-////	ReturnからReturnBackへの変換
-//	private RentalBack ConvRentalToRentalBack(Rental r) {
-//		RentalBack rb = new RentalBack();
-//		rb.setAssetNum(r.getDevice().getAssetNum());
-//		rb.setInventoryDate(sdf.format(r.getInventoryDate()));
-//		rb.setMaker(r.getDevice().getMaker());
-//		rb.setOperatingSystem(r.getDevice().getOperatingSystem());
-//		rb.setRemarks(r.getRemarks());
-//		rb.setStorageLocation(r.getDevice().getStorageLocation());
-//
-//		if (r.getEmpty()) {
-////			貸出可の場合
-//			rb.setEmpty("可");
-//		} else {
-////			貸出中の場合
-//			rb.setEmployeeNum(r.getUser().getEmployeeNum());
-//			rb.setEmpty("不可");
-//			rb.setLoanDate(sdf.format(r.getLoanDate()));
-//			rb.setName(r.getUser().getName());
-////			返却予定日の計算
-//			Calendar c = Calendar.getInstance();
-//			c.setTime(r.getLoanDate());
-//			c.add(Calendar.MONTH, 3);
-//			rb.setExpReturnDate(sdf.format(c.getTime()));
-//		}
-//
-//		return rb;
-//
-//	}
-//
-////	社員名の取得
-//	public List<User> userDetail(String employeeNum) {
-//		return userRepository.findByEmployeeNumAndDeleteFlagFalse(employeeNum);
-//	}
-//
-////	レンタル時の処理
-//	public void rental(RentalForm rentalForm) {
-//		Rental r = rentalRepository.findByAssetNum(rentalForm.getAsset_num()).get(0);
-//		User u = userRepository.findByEmployeeNum(rentalForm.getEmployee_num()).get(0);
-//		r.setEmpty(false);
-//		r.setUser(u);
-//		r.setLoanDate(Date.valueOf(rentalForm.getLoan_date()));
-//		rentalRepository.save(r);
-//	}
+	public MessageResponse rental(RentalForm rf) {
+		List<User> users = userRepository.findByEmployeeNumAndDeleteFlagFalse(rf.getEmployeeNum());
+		if ((users.size()) == 0) return new MessageResponse(false, "存在しないユーザーです");
 
-////	返却時の処理
-//	public void back(ReturnForm returnForm) {
-//		Rental r = rentalRepository.findByAssetNum(returnForm.getAsset_num()).get(0);
-//		History h = new History();
-//
-//		h.setDevice(r.getDevice());
-//		h.setLoanDate(r.getLoanDate());
-//		h.setUser(r.getUser());
-//		h.setReturnDate(Date.valueOf(returnForm.getReturn_date()));
-//		historyRepository.save(h);
-//
-//		r.setEmpty(true);
-//		r.setUser(null);
-//		r.setLoanDate(null);
-//		rentalRepository.save(r);
-//
-//	}
+		Rental r = rentalRepository.findByRentalId(rf.getRentalId()).get(0);
+		r.setFree(false);
+		r.setUser(users.get(0));
+		r.setLoanDate(Date.valueOf(rf.getLoanDate()));
+		r.setInventoryDate(Date.valueOf(rf.getInventoryDate()));
+		r.setRemarks(rf.getRemarks());
+		rentalRepository.save(r);
 
-////	備考／棚卸時の処理
-//	public void setRemarks(RemarksForm remarksForm) {
-//		Rental r = rentalRepository.findByAssetNum(remarksForm.getAsset_num()).get(0);
-//		r.setInventoryDate(Date.valueOf(remarksForm.getInventory_date()));
-//		r.setRemarks(remarksForm.getRemarks());
-//		rentalRepository.save(r);
-//
-//	}
-//
-//	public List<Device> findUsableDevices() {
-//		List<Rental> lr = rentalRepository.findAll();
-//		List<Device> ld = deviceRepository.findAll();
-//		List<Device> usableld = new ArrayList<Device>();
-//
-//		dLoop: for (Device d : ld) {
-//			for (Rental r : lr) {
-//				if (r.getAssetNum().equals(d.getAssetNum())) continue dLoop;
-//			}
-//			usableld.add(d);
-//		}
-//		return usableld;
-//
-//	}
-//
-//	public void addDevice(RemarksForm remarksForm) {
-//		Rental r = new Rental();
-//		Device d = deviceRepository.findByAssetNum(remarksForm.getAsset_num()).get(0);		
-//		r.setAssetNum(d.getAssetNum());
-//		r.setEmpty(true);
-//		r.setInventoryDate(Date.valueOf(remarksForm.getInventory_date()));
-//		r.setRemarks(remarksForm.getRemarks());
-//		rentalRepository.save(r);		
-//	}
+		return new MessageResponse(true, "");
+	}
+
+	public MessageResponse back(ReturnForm rf) {
+		Rental r = rentalRepository.findByRentalId(rf.getRentalId()).get(0);
+		r.setFree(false);
+		r.setUser(null);
+		r.setLoanDate(null);
+		r.setRemarks(null);
+		rentalRepository.save(r);
+		
+		return new MessageResponse(true, "");
+	}
+	
+	public MessageResponse inventory(InventoryForm inf) {
+		Rental r = rentalRepository.findByRentalId(inf.getRentalId()).get(0);
+		r.setInventoryDate(Date.valueOf(inf.getInventoryDate()));
+		rentalRepository.save(r);
+		
+		return new MessageResponse(true, "");
+	}
 
 }

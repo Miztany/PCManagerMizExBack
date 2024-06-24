@@ -38,15 +38,13 @@ public class UserService {
 	}
 
 	public MessageResponse register(UserForm uf) {
-		MessageResponse result;
 		if (userRepository.findByEmployeeNum(uf.getEmployeeNum()).size() == 0) {
 			User nu = formToEntity(uf);
 			userRepository.save(nu);
-			result = new MessageResponse(true, "");
+			return new MessageResponse(true, "");
 		} else {
-			result = new MessageResponse(false, "既に存在するIDです");
+			return new MessageResponse(false, "既に存在するIDです");
 		}
-		return result;
 	}
 
 	private User formToEntity(UserForm uf) {

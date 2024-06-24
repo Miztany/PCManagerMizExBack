@@ -33,25 +33,15 @@ public class DeviceController {
 	@GetMapping("/getDeviceDetail")
 	public ContentResponse<Device> getDeviceDetail(@RequestParam("id") String assetNum) {
 		ContentResponse<Device> crd = new ContentResponse<Device>();
-		if (assetNum.equals("null")) {
-			crd.setResult(false);
-		} else {
-			crd.setResult(true);
-			crd.setContent(deviceService.findByAssetNum(assetNum).get(0));
-		}
-		return crd;
+		if (assetNum.equals("null")) return new ContentResponse<Device>(false, null);
+		return new ContentResponse<Device>(true, deviceService.findByAssetNum(assetNum).get(0));
 	}
 
 	@PostMapping("/postDeviceSave")
 	public MessageResponse postDeviceSave(@Validated @ModelAttribute("edit") DeviceForm df,
 			BindingResult bindingResult) {
-		MessageResponse mr;
-		if (bindingResult.hasErrors()) {
-			mr = new MessageResponse(false, "入力に誤りがあります");
-		} else {
-			mr = deviceService.formatSave(df);
-		}
-		return mr;
+		if (bindingResult.hasErrors()) return new MessageResponse(false, "入力に誤りがあります");
+		return deviceService.formatSave(df);
 	}
 
 	@PostMapping("/postDeviceDelete")
@@ -62,13 +52,7 @@ public class DeviceController {
 	@PostMapping("/postDeviceRegister")
 	public MessageResponse postDeviceRegister(@Validated @ModelAttribute("edit") DeviceForm df,
 			BindingResult bindingResult) {
-		MessageResponse mr;
-		if (bindingResult.hasErrors()) {
-			System.out.println(bindingResult);
-			mr = new MessageResponse(false, "入力に誤りがあります");
-		} else {
-			mr = deviceService.register(df);
-		}
-		return mr;
+		if (bindingResult.hasErrors()) return new MessageResponse(false, "入力に誤りがあります");
+		return deviceService.register(df);
 	}
 }

@@ -9,16 +9,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class RentalForm {
+public class ReturnForm {
 	@NotEmpty
 	private Integer rentalId;
-	@NotEmpty
-	private String employeeNum;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@NotNull
-	private LocalDate loanDate;
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@NotNull
-	private LocalDate inventoryDate;
-	private String remarks;
+	private LocalDate returnDate;
+
 }

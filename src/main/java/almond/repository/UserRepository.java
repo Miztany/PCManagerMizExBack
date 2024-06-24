@@ -13,5 +13,4 @@ public interface UserRepository extends JpaRepository<User, String>  {
 	public List<User> findByEmployeeNumAndDeleteFlagFalse(String employeeNum);
 	
 	public List<User> findByDeleteFlagFalse();
-
 }

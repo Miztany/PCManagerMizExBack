@@ -32,26 +32,14 @@ public class UserController {
 
 	@GetMapping("/getUserDetail")
 	public ContentResponse<User> getUesrDetail(@RequestParam("id") String employeeNum) {
-		ContentResponse<User> cru = new ContentResponse<User>();
-		if(employeeNum.equals("null")) {
-			cru.setResult(false);
-		}else {
-			cru.setResult(true);
-			cru.setContent(userService.findByEmployeeNum(employeeNum).get(0));
-		}
-		return cru;
+		if (employeeNum.equals("null")) new ContentResponse<User>(false, null);
+		return new ContentResponse<User>(true, userService.findByEmployeeNum(employeeNum).get(0));
 	}
-	
+
 	@PostMapping("/postUserSave")
-	public MessageResponse postUsereSave(@Validated @ModelAttribute("edit") UserForm uf,
-			BindingResult bindingResult) {
-		MessageResponse mr;
-		if (bindingResult.hasErrors()) {
-			mr = new MessageResponse(false, "入力に誤りがあります");
-		} else {
-			mr = userService.formatSave(uf);
-		}
-		return mr;
+	public MessageResponse postUsereSave(@Validated @ModelAttribute("edit") UserForm uf, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) return new MessageResponse(false, "入力に誤りがあります");
+		return userService.formatSave(uf);
 	}
 
 	@PostMapping("/postUserDelete")
@@ -62,14 +50,9 @@ public class UserController {
 	@PostMapping("/postUserRegister")
 	public MessageResponse postUserRegister(@Validated @ModelAttribute("edit") UserForm uf,
 			BindingResult bindingResult) {
-		MessageResponse mr;
-		if (bindingResult.hasErrors()) {
-			System.out.println(bindingResult);
-			mr = new MessageResponse(false, "入力に誤りがあります");
-		} else {
-			mr = userService.register(uf);
-		}
-		return mr;
+
+		if (bindingResult.hasErrors()) return new MessageResponse(false, "入力に誤りがあります");
+		return userService.register(uf);
 	}
 
 }

@@ -47,18 +47,16 @@ public class DeviceService {
 	}
 
 	public MessageResponse register(DeviceForm df) {
-		MessageResponse result;
 		if (deviceRepository.findByAssetNum(df.getAssetNum()).size() == 0) {
 			Device nd = formToEntity(df);
 			deviceRepository.save(nd);
 			Rental nr = newRentalFromDevice(nd);
 			System.out.println(nr);
 			rentalRepository.save(nr);
-			result = new MessageResponse(true, "");
+			return new MessageResponse(true, "");
 		} else {
-			result = new MessageResponse(false, "既に存在するIDです");
+			return new MessageResponse(false, "既に存在するIDです");
 		}
-		return result;
 	}
 
 	private Rental newRentalFromDevice(Device d) {
