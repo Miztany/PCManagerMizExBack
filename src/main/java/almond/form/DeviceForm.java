@@ -46,5 +46,6 @@ public class DeviceForm {
 	@NotNull
 	private LocalDate updateDate;
 	private String remarks;
+	@NotNull
 	private Boolean deleteFlag;
 }

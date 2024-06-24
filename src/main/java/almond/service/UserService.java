@@ -1,12 +1,15 @@
 package almond.service;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import almond.entity.User;
+import almond.form.UserForm;
 import almond.repository.UserRepository;
+import almond.response.MessageResponse;
 
 @Service
 public class UserService {
@@ -20,46 +23,48 @@ public class UserService {
 	public List<User> findByEmployeeNum(String employeeNum) {
 		return userRepository.findByEmployeeNum(employeeNum);
 	}
+	
+	public MessageResponse formatSave(UserForm uf) {
+		User nu = formToEntity(uf);
+		userRepository.save(nu);
+		return new MessageResponse(true, "");
+	}
 
-//	public List<User> findByDeleteFlagFalse() {
-//		return userRepository.findByDeleteFlagFalse();
-//	}
-//
-//	public void edit(UserForm userForm) {
-//		User u = new User();
-//		u.setDeleteFlag(false);
-//		String accountLevel = "";
-//		switch (userForm.getAccount_level()) {
-//			case 1:
-//				accountLevel = "管理者";
-//				break;
-//			case 2:
-//				accountLevel = "利用者";
-//				break;
-//		}
-//		u.setAccountLevel(accountLevel);
-//		u.setAge(userForm.getAge());
-//		u.setDepartment(userForm.getDepartment());
-//		u.setEmployeeNum(userForm.getEmployee_num());
-//		u.setGender(userForm.getGender());
-//		u.setMailAddress(userForm.getMail_address());
-//		u.setName(userForm.getName());
-//		u.setNameKana(userForm.getName_kana());
-//		u.setPosition(userForm.getPosition());
-//		u.setRegisterDate(Date.valueOf(userForm.getRegister_date()));
-//		u.setRetireDate(userForm.getRetire_date() == null ? null : Date.valueOf(userForm.getRetire_date()));
-//		u.setTelNum(userForm.getTel_num());
-//		u.setUpdateDate(Date.valueOf(userForm.getUpdate_date()));
-//
-//		userRepository.save(u);
-//	}
-//
+	public MessageResponse delete(UserForm uf) {
+		User u = userRepository.findByEmployeeNum(uf.getEmployeeNum()).get(0);
+		u.setDeleteFlag(true);
+		userRepository.save(u);
+		return new MessageResponse(true, "");
+	}
 
-//
-//	public void delete(String employeeNum) {
-//		User u = userRepository.findByEmployeeNum(employeeNum).get(0);
-//		u.setDeleteFlag(true);
-//		userRepository.save(u);
-//	}
+	public MessageResponse register(UserForm uf) {
+		MessageResponse result;
+		if (userRepository.findByEmployeeNum(uf.getEmployeeNum()).size() == 0) {
+			User nu = formToEntity(uf);
+			userRepository.save(nu);
+			result = new MessageResponse(true, "");
+		} else {
+			result = new MessageResponse(false, "既に存在するIDです");
+		}
+		return result;
+	}
 
+	private User formToEntity(UserForm uf) {
+		User nu = new User();
+		nu.setAccountLevel(uf.getAccountLevel());
+		nu.setAge(uf.getAge());
+		nu.setDeleteFlag(uf.getDeleteFlag());
+		nu.setDepartment(uf.getDepartment());
+		nu.setEmployeeNum(uf.getEmployeeNum());
+		nu.setGender(uf.getGender());
+		nu.setMailAddress(uf.getMailAddress());
+		nu.setName(uf.getName());
+		nu.setNameKana(uf.getNameKana());
+		nu.setPosition(uf.getPosition());
+		nu.setRegisterDate(Date.valueOf(uf.getRegisterDate()));
+		nu.setTelNum(uf.getTelNum());
+		nu.setUpdateDate(Date.valueOf(uf.getUpdateDate()));
+		nu.setRetireDate(uf.getRetireDate() == null ? null : Date.valueOf(uf.getRetireDate()));
+		return nu;
+	}
 }

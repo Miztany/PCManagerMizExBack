@@ -15,23 +15,23 @@ public class UserForm {
 
 	@NotBlank
 	@Size(min = 1, max = 10)
-	private String employee_num;
+	private String employeeNum;
 	@NotBlank
 	@Size(min = 1, max = 20)
 	private String name;
 	@NotBlank
 	@Size(min = 1, max = 20)
-	private String name_kana;
+	private String nameKana;
 	@NotBlank
 	@Size(min = 1, max = 20)
 	private String department;
 	@NotBlank
 	@Size(min = 1, max = 20)
-	private String tel_num;
+	private String telNum;
 	@NotBlank
 	@Email
 	@Size(min = 1, max = 50)
-	private String mail_address;
+	private String mailAddress;
 	@NotNull
 	private Integer age;
 	@NotNull
@@ -40,14 +40,16 @@ public class UserForm {
 	@Size(min = 1, max = 20)
 	private String position;
 	@NotNull
-	private Integer account_level;
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private LocalDate retire_date;
+	private String accountLevel;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@NotNull
-	private LocalDate register_date;
+	private LocalDate registerDate;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@NotNull
-	private LocalDate update_date;
+	private LocalDate updateDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate retireDate;
+	@NotNull
+	private Boolean deleteFlag;
 
 }

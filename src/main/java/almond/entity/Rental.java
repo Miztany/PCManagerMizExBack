@@ -35,5 +35,6 @@ public class Rental {
 	private Date inventoryDate;
 	@Column(name = "remarks")
 	private String remarks;
-
+	@Column(name="delete_flag")
+	private Boolean deleteFlag; 
 }

@@ -43,76 +43,32 @@ public class DeviceController {
 	}
 
 	@PostMapping("/postDeviceSave")
-	public MessageResponse postDeviceSave(@Validated @ModelAttribute("edit") DeviceForm df, BindingResult bindingResult) {
-		MessageResponse mr = new MessageResponse();
-		System.out.println(bindingResult.hasErrors());
+	public MessageResponse postDeviceSave(@Validated @ModelAttribute("edit") DeviceForm df,
+			BindingResult bindingResult) {
+		MessageResponse mr;
 		if (bindingResult.hasErrors()) {
-			mr.setResult(false);
-			mr.setMessage("入力に誤りがあります");
-		}else{
-			mr.setResult(true);
-			deviceService.formatSave(df);
-
+			mr = new MessageResponse(false, "入力に誤りがあります");
+		} else {
+			mr = deviceService.formatSave(df);
 		}
 		return mr;
 	}
 
-//	@GetMapping("/device")
-//	public String firstload(Model model) {
-//		model.addAttribute("listDevice", deviceService.findByDeleteFlagFalse());
-//		return "device";
-//	}
-//
-//	@GetMapping("/device/search")
-//	public String search(@Validated @ModelAttribute("search") SearchForm searchForm, BindingResult bindingResult,
-//			Model model) {
-//		if (bindingResult.hasErrors()) {
-//			return "redirect:/device";
-//		} else {
-//			model.addAttribute("listDevice", deviceService.findByAny(searchForm.getQuery()));
-//			return "device";
-//		}
-//
-//	}
-//
-//	@PostMapping("/device/edit")
-//	@ResponseBody
-//	public Status edit(@Validated @ModelAttribute("edit") DeviceForm deviceForm, BindingResult bindingResult) {
-//		Status s = new Status();
-//		s.setResult(true);
-//
-//		if (bindingResult.hasErrors()) {
-//			s.setMessage("入力に誤りがあります");
-//			s.setResult(false);
-//		} else {
-//			deviceService.edit(deviceForm);
-//		}
-//
-//		return s;
-//	}
-//
-//	@GetMapping("/device/detail")
-//	@ResponseBody
-//	public DeviceBack detail(@RequestParam String assetNum) {
-//		List<Device> ld = deviceService.findByAssetNum(assetNum);
-//		List<History> lh = deviceService.findHistoryFive(ld.get(0));
-//		DeviceBack db = new DeviceBack();
-//		db.setDevice(ld.get(0));
-//		db.setListHistory(lh);
-//		return db;
-//	}
-//
-//	@GetMapping("/device/moreHistory")
-//	@ResponseBody
-//	public List<History> moreHistory(@RequestParam String assetNum) {
-//		List<Device> ld = deviceService.findByAssetNum(assetNum);
-//		return deviceService.findByDeviceOrderByReturnDateDesc(ld.get(0));
-//	}
-//
-//	@GetMapping("/device/delete")
-//	@ResponseBody
-//	public void delete(@RequestParam String assetNum) {
-//		deviceService.delete(assetNum);
-//	}
+	@PostMapping("/postDeviceDelete")
+	public MessageResponse postDeviceDelete(@ModelAttribute("edit") DeviceForm df) {
+		return deviceService.delete(df);
+	}
 
+	@PostMapping("/postDeviceRegister")
+	public MessageResponse postDeviceRegister(@Validated @ModelAttribute("edit") DeviceForm df,
+			BindingResult bindingResult) {
+		MessageResponse mr;
+		if (bindingResult.hasErrors()) {
+			System.out.println(bindingResult);
+			mr = new MessageResponse(false, "入力に誤りがあります");
+		} else {
+			mr = deviceService.register(df);
+		}
+		return mr;
+	}
 }

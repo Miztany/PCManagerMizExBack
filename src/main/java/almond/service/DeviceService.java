@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import almond.entity.Device;
+import almond.entity.Rental;
 import almond.form.DeviceForm;
 import almond.repository.DeviceRepository;
-import almond.repository.HistoryRepository;
+import almond.repository.RentalRepository;
+import almond.response.MessageResponse;
 
 @Service
 public class DeviceService {
@@ -18,7 +20,7 @@ public class DeviceService {
 	DeviceRepository deviceRepository;
 
 	@Autowired
-	HistoryRepository historyRepository;
+	RentalRepository rentalRepository;
 
 	public List<Device> findByDeleteFlagFalse() {
 		return deviceRepository.findByDeleteFlagFalse();
@@ -28,7 +30,47 @@ public class DeviceService {
 		return deviceRepository.findByAssetNum(assetNum);
 	}
 
-	public void formatSave(DeviceForm df) {
+	public MessageResponse formatSave(DeviceForm df) {
+		Device nd = formToEntity(df);
+		deviceRepository.save(nd);
+		return new MessageResponse(true, "");
+	}
+
+	public MessageResponse delete(DeviceForm df) {
+		Device d = deviceRepository.findByAssetNum(df.getAssetNum()).get(0);
+		d.setDeleteFlag(true);
+		deviceRepository.save(d);
+		Rental r = rentalRepository.findByDevice(d).get(0);
+		r.setDeleteFlag(true);
+		rentalRepository.save(r);
+		return new MessageResponse(true, "");
+	}
+
+	public MessageResponse register(DeviceForm df) {
+		MessageResponse result;
+		if (deviceRepository.findByAssetNum(df.getAssetNum()).size() == 0) {
+			Device nd = formToEntity(df);
+			deviceRepository.save(nd);
+			Rental nr = newRentalFromDevice(nd);
+			System.out.println(nr);
+			rentalRepository.save(nr);
+			result = new MessageResponse(true, "");
+		} else {
+			result = new MessageResponse(false, "既に存在するIDです");
+		}
+		return result;
+	}
+
+	private Rental newRentalFromDevice(Device d) {
+		Rental nr = new Rental();
+		nr.setDeleteFlag(false);
+		nr.setDevice(d);
+		nr.setFree(true);
+		nr.setInventoryDate(d.getUpdateDate());
+		return nr;
+	}
+
+	private Device formToEntity(DeviceForm df) {
 		Device nd = new Device();
 		nd.setAssetNum(df.getAssetNum());
 		nd.setCapacity(df.getCapacity());
@@ -44,58 +86,7 @@ public class DeviceService {
 		nd.setStartDate(Date.valueOf(df.getStartDate()));
 		nd.setStorageLocation(df.getStorageLocation());
 		nd.setUpdateDate(Date.valueOf(df.getUpdateDate()));
-		deviceRepository.save(nd);	
+		return nd;
 	}
-
-
-//	public List<Device> findByDeleteFlagFalse() {
-//		return deviceRepository.findByDeleteFlagFalse();
-//	}
-//
-//	public List<Device> findByAny(String query) {
-//		return deviceRepository.findByAny(query);
-//	}
-//
-//	public void edit(DeviceForm deviceForm) {
-//		Device d = new Device();
-//		
-//		d.setAssetNum(deviceForm.getAsset_num());
-//		d.setCapacity(deviceForm.getCapacity());
-//		d.setDeleteFlag(false);
-//		d.setEndDate(Date.valueOf(deviceForm.getEnd_date()));
-//		d.setFailure(deviceForm.getFailure());
-//		d.setGraphicsBoard(deviceForm.getGraphics_board());
-//		d.setMaker(deviceForm.getMaker());
-//		d.setMemory(deviceForm.getMemory());
-//		d.setOperatingSystem(deviceForm.getOperating_system());
-//		d.setRegisterDate(Date.valueOf(deviceForm.getRegister_date()));
-//		d.setRemarks(deviceForm.getRemarks());
-//		d.setStartDate(Date.valueOf(deviceForm.getStart_date()));
-//		d.setStorageLocation(deviceForm.getStorage_location());
-//		d.setUpdateDate(Date.valueOf(deviceForm.getUpdate_date()));
-//		
-//		deviceRepository.save(d);
-//		
-//	}
-//
-
-//
-//	public List<History> findHistoryFive(Device device) {
-//		List<History> lh = historyRepository.findByDeviceOrderByReturnDateDesc(device);
-//		if(lh.size() != 0) {
-//			lh = lh.subList(0, Math.min(5, lh.size()));
-//		}
-//		return lh;
-//	}
-//
-//	public List<History> findByDeviceOrderByReturnDateDesc(Device device) {
-//		return historyRepository.findByDeviceOrderByReturnDateDesc(device);
-//	}
-//
-//	public void delete(String assetNum) {
-//		Device d = deviceRepository.findByAssetNum(assetNum).get(0);
-//		d.setDeleteFlag(true);
-//		deviceRepository.save(d);		
-//	}
 
 }
