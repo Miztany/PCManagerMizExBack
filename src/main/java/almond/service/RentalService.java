@@ -58,7 +58,7 @@ public class RentalService {
 		r.setFree(true);
 		r.setUser(null);
 		r.setLoanDate(null);
-		r.setRemarks(null);
+		r.setRemarks(rf.getRemarks());
 		rentalRepository.save(r);
 		
 		return new MessageResponse(true, "");
@@ -67,6 +67,7 @@ public class RentalService {
 	public MessageResponse inventory(InventoryForm inf) {
 		Rental r = rentalRepository.findByRentalId(inf.getRentalId()).get(0);
 		r.setInventoryDate(Date.valueOf(inf.getInventoryDate()));
+		r.setRemarks(inf.getRemarks());
 		rentalRepository.save(r);
 		
 		return new MessageResponse(true, "");

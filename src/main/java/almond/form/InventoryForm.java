@@ -11,4 +11,5 @@ public class InventoryForm {
 	private Integer rentalId;
 	@NotNull
 	private LocalDate inventoryDate;
+	private String remarks;
 }
