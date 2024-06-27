@@ -21,14 +21,10 @@ public class RentalService {
 	@Autowired
 	RentalRepository rentalRepository;
 
-//	@Autowired
-//	DeviceRepository deviceRepository;
-//
 	@Autowired
 	UserRepository userRepository;
 
-//	@Autowired
-//	HistoryRepository historyRepository;
+
 
 	public List<Rental> findUsable() {
 		return rentalRepository.findUsable();
