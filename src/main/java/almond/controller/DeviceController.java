@@ -32,7 +32,6 @@ public class DeviceController {
 
 	@GetMapping("/getDeviceDetail")
 	public ContentResponse<Device> getDeviceDetail(@RequestParam("id") String assetNum) {
-		ContentResponse<Device> crd = new ContentResponse<Device>();
 		if (assetNum.equals("null")) return new ContentResponse<Device>(false, null);
 		return new ContentResponse<Device>(true, deviceService.findByAssetNum(assetNum).get(0));
 	}

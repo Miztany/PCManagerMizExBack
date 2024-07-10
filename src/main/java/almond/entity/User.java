@@ -26,9 +26,9 @@ public class User {
 	@Column(name = "mail_address")
 	private String mailAddress;
 	@Column(name = "age")
-	private int age;
+	private Integer age;
 	@Column(name = "gender")
-	private int gender;
+	private Integer gender;
 	@Column(name = "position")
 	private String position;
 	@Column(name = "account_level")

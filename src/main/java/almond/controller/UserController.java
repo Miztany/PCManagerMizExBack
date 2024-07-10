@@ -50,7 +50,6 @@ public class UserController {
 	@PostMapping("/postUserRegister")
 	public MessageResponse postUserRegister(@Validated @ModelAttribute("edit") UserForm uf,
 			BindingResult bindingResult) {
-
 		if (bindingResult.hasErrors()) return new MessageResponse(false, "入力に誤りがあります");
 		return userService.register(uf);
 	}

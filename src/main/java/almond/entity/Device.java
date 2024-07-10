@@ -20,7 +20,7 @@ public class Device {
 	@Column(name = "operating_system")
 	private String operatingSystem;
 	@Column(name = "memory")
-	private int memory;
+	private Integer memory;
 	@Column(name = "capacity")
 	private String capacity;
 	@Column(name = "graphics_board")

@@ -20,7 +20,7 @@ public class Rental {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "rental_id")
-	private int rentalId;
+	private Integer rentalId;
 	@OneToOne
 	@JoinColumn(name = "asset_num")
 	private Device device;

@@ -34,7 +34,6 @@ public class RentalController {
 
 	@GetMapping("/getRentalDetail")
 	public ContentResponse<Rental> getRentalDetail(@RequestParam("id") String rentalIdstr) {
-		ContentResponse<Rental> crr = new ContentResponse<Rental>();
 		if (rentalIdstr.equals("null")) return new ContentResponse<Rental>(false, null);
 		return new ContentResponse<Rental>(true, rentalService.findByRentalId(Integer.parseInt(rentalIdstr)).get(0));
 	}
